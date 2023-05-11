@@ -1,4 +1,4 @@
 *.csv
 /bin/*
-/src/inputs/*
+/src/input/*
 /src/parser
