@@ -1,3 +1,4 @@
-*.csvgit --
+*.csv
 /bin/*
 /src/inputs/*
+/src/parser
