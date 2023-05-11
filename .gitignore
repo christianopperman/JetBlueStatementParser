@@ -1,2 +1,3 @@
 *.csvgit --
 /bin/*
+/src/inputs/*
