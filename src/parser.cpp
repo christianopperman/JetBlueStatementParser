@@ -1,9 +1,9 @@
 #include <iostream>
 #include <filesystem>
-// #include <print>
 #include <sstream>
 #include <fstream>
-#include <chrono>
+#include <unordered_map>
+#include <regex>
 
 class CSVRow {
     public:
@@ -24,7 +24,14 @@ class CSVRow {
         std::string getPayee() { return payee; }
 
         // Setter methods
-        void setPayee(std::string& p) { payee = p; }
+        void setPayee(std::unordered_map<std::string, std::string> payee_map) { 
+            for ( auto &myPair : payee_map ) {
+                if (std::regex_search(merchant, std::regex(myPair.first))) {
+                    payee = myPair.second;
+                    std::cout << "Payee for " << merchant << " | " << amount << " | " << charge_type << " found: " << payee << "\n";
+                }
+            }
+         }
 
         void printRow() {
             // std::string payee_string = payee == nullptr ? '' : payee;
@@ -56,7 +63,7 @@ class CSVRow {
 /// @param folder_loc[in] Folder in which to look for the most recent .csv file.
 /// @returns file (std::string) Filepath to most recent .csv file in folder_loc
 std::string getInputCSV(std::string folder_loc = "src/input") {
-    std::filesystem::path dir = std::filesystem::current_path() / folder_loc;
+    std::filesystem::path dir {std::filesystem::current_path() / folder_loc};
     auto dir_iter = std::filesystem::directory_iterator(dir);
 
     std::filesystem::path latest_file{};
@@ -76,16 +83,37 @@ std::string getInputCSV(std::string folder_loc = "src/input") {
     }
     
     return latest_file;
+}
 
+/// @brief Builds a map for <merchant, payee> for categorizing rows in bank statement from .csv file
+/// @return payee_map (std::unordered_map)
+std::unordered_map<std::string, std::string> buildPayeeMap() {
+    std::filesystem::path csv_loc {std::filesystem::current_path() / "src/payee_map.csv"};
+    std::fstream file(csv_loc);
+    std::string line;
+    std::unordered_map<std::string, std::string> payee_map;
+
+    while(getline(file, line)) {
+        std::istringstream stream(line);
+        std::string token;
+        std::vector<std::string> row;
+
+        while(getline(stream, token, ',')) {
+            row.push_back(token);
+        }
+        payee_map[row[0]] = row[1];
+    }
+    return payee_map;
 }
 
 int main() {
     std::filesystem::path file_loc { getInputCSV() };
+    std::unordered_map<std::string, std::string> payee_map { buildPayeeMap() };
     
     std::vector<CSVRow> rows;
-
     std::fstream file(file_loc);
     std::string line;
+
     while(getline(file, line)) {
         if (line[0] == '4') {
             CSVRow row = CSVRow(line);
@@ -93,8 +121,7 @@ int main() {
         }
     }
 
-    for (CSVRow row : rows) {
-        row.printRow();
-        
+    for (auto row : rows) {
+        row.setPayee(payee_map);
     }
 }
