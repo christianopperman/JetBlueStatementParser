@@ -1,63 +1,11 @@
 #include <iostream>
 #include <filesystem>
-#include <sstream>
 #include <fstream>
+#include <sstream>
 #include <unordered_map>
-#include <regex>
 
-class CSVRow {
-    public:
-        // Constructor
-        CSVRow(std::string& unsplit_row, const char& delim=',') {
-            std::vector<std::string> parsed_row = SplitRow(unsplit_row, delim);
-            date = parsed_row[0];
-            merchant = parsed_row[1];
-            charge_type = parsed_row[2];
-            amount = parsed_row[3];
-        }
-
-        // Getter methods
-        std::string getDate() { return date; }
-        std::string getMerchant() { return merchant; }
-        std::string getChargeType() { return charge_type; }
-        std::string getAmount() { return amount; }
-        std::string getPayee() { return payee; }
-
-        // Setter methods
-        void setPayee(std::unordered_map<std::string, std::string> payee_map) { 
-            for ( auto &myPair : payee_map ) {
-                if (std::regex_search(merchant, std::regex(myPair.first))) {
-                    payee = myPair.second;
-                    std::cout << "Payee for " << merchant << " | " << amount << " | " << charge_type << " found: " << payee << "\n";
-                }
-            }
-         }
-
-        void printRow() {
-            // std::string payee_string = payee == nullptr ? '' : payee;
-            std::cout << date << " | " << merchant << " | " << charge_type << " | " << amount << "\n";
-        }
-
-    private:
-        std::string date;
-        std::string merchant;
-        std::string charge_type;
-        std::string amount;
-        std::string payee;
-
-        std::vector<std::string> SplitRow(std::string& unsplit_row, const char& delim) {
-            std::istringstream stream(unsplit_row);
-            std::string token;
-
-            std::vector<std::string> row;
-
-            while(getline(stream, token, delim)) {
-                row.push_back(token);
-            }
-
-            return row;
-        }
-};
+#include "CSVRow.h"
+#include "parser.h"
 
 /// @brief Return the most recent .csv file in the input folder.
 /// @param folder_loc[in] Folder in which to look for the most recent .csv file.
@@ -115,13 +63,23 @@ int main() {
     std::string line;
 
     while(getline(file, line)) {
-        if (line[0] == '4') {
+        if (line[0] == '4') { // TODO: Fix this so April isn't hard coded
+            // TODO: There's probably a more efficient way that doesn't involve creating a CSVRow object that is ultimately not used
+            // May require SplitRow() to be a global function instead of a class method? 
             CSVRow row = CSVRow(line);
-            rows.push_back(row);
+            
+            // Not necessary to include Payment Received lines in calculation because
+            // Those are payments already made and will confuse the totals
+            if (row.getMerchant() != "Payment Received") {
+                row.setPayee(payee_map);
+                rows.push_back(row);
+            }
+        
         }
     }
 
     for (auto row : rows) {
-        row.setPayee(payee_map);
+        row.printRow();
     }
+
 }

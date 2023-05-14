@@ -2,3 +2,4 @@
 /bin/*
 /src/input/*
 /src/parser
+/src/.DS_Store
