@@ -54,6 +54,30 @@ std::unordered_map<std::string, std::string> buildPayeeMap() {
     return payee_map;
 }
 
+void processTotals(std::vector<CSVRow> rows) {
+    double c_total;
+    double p_total;
+    double b_total;
+
+    for (CSVRow row : rows) {
+        const std::string set_payee = row.getPayee();
+        const double amt = std::stod(row.getAmount());
+        if (set_payee == "Pia") {
+            p_total += amt;
+        } else if (set_payee == "Both") {
+            b_total += amt;
+        }
+        else {
+            c_total += amt;
+        }
+    }
+
+    std::cout << "Total for Christian: $" << c_total << "\n";
+    std::cout << "Total for Pia: $" << p_total << "\n";
+    std::cout << "Total for Both: $" << b_total << "\n";
+}
+
+
 int main() {
     std::filesystem::path file_loc { getInputCSV() };
     std::unordered_map<std::string, std::string> payee_map { buildPayeeMap() };
@@ -78,22 +102,6 @@ int main() {
         }
     }
 
-    // Process totals to be paid
-    double c_total;
-    double p_total;
-    double b_total;
-    for (auto row : rows) {
-        const std::string set_payee = row.getPayee();
-        const double amt = std::stod(row.getAmount());
-        if (set_payee == "Pia") {
-            p_total += amt;
-        } else if (set_payee == "Both") {
-            b_total += amt;
-        }
-        else {
-            c_total += amt;
-        }
-
-    }
+    processTotals(rows);
 
 }
