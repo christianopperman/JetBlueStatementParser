@@ -10,7 +10,7 @@
 /// @brief Return the most recent .csv file in the input folder.
 /// @param folder_loc[in] Folder in which to look for the most recent .csv file.
 /// @returns file (std::string) Filepath to most recent .csv file in folder_loc
-std::string getInputCSV(std::string folder_loc = "src/input") {
+std::string getInputCSV(std::string folder_loc) {
     std::filesystem::path dir {std::filesystem::current_path() / folder_loc};
     auto dir_iter = std::filesystem::directory_iterator(dir);
 

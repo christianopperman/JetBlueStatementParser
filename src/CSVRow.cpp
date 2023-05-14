@@ -4,7 +4,7 @@
 #include <sstream>
 
 // Constructor
-CSVRow::CSVRow(std::string& unsplit_row, const char& delim=',') {
+CSVRow::CSVRow(std::string& unsplit_row, const char& delim) {
     std::vector<std::string> parsed_row = SplitRow(unsplit_row, delim);
     date = parsed_row[0];
     merchant = parsed_row[1];
