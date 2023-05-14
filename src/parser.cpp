@@ -78,8 +78,22 @@ int main() {
         }
     }
 
+    // Process totals to be paid
+    double c_total;
+    double p_total;
+    double b_total;
     for (auto row : rows) {
-        row.printRow();
+        const std::string set_payee = row.getPayee();
+        const double amt = std::stod(row.getAmount());
+        if (set_payee == "Pia") {
+            p_total += amt;
+        } else if (set_payee == "Both") {
+            b_total += amt;
+        }
+        else {
+            c_total += amt;
+        }
+
     }
 
 }
