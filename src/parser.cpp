@@ -42,6 +42,8 @@ std::unordered_map<std::string, std::string> buildPayeeMap() {
     std::unordered_map<std::string, std::string> payee_map;
 
     while(getline(file, line)) {
+        // remove any carriage returns from the row
+        line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
         std::istringstream stream(line);
         std::string token;
         std::vector<std::string> row;
@@ -66,6 +68,7 @@ void processTotals(std::vector<CSVRow> rows) {
             p_total += amt;
         } else if (set_payee == "Both") {
             b_total += amt;
+            row.printRow();
         }
         else {
             c_total += amt;
@@ -98,7 +101,6 @@ int main() {
                 row.setPayee(payee_map);
                 rows.push_back(row);
             }
-        
         }
     }
 
