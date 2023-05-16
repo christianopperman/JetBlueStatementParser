@@ -85,13 +85,24 @@ int main() {
     std::filesystem::path file_loc { getInputCSV() };
     std::unordered_map<std::string, std::string> payee_map { buildPayeeMap() };
     
+    // TODO: Currently assumes user supplies a valid month value for comparison below.
+    // Probably not the best
+    std::string user_month;
+    std::cout << "Please enter the current month (1-12): ";
+    std::cin >> user_month;
+    const std::string target_month {user_month};
+    
     std::vector<CSVRow> rows;
     std::fstream file(file_loc);
     std::string line;
 
     while(getline(file, line)) {
-        if (line[0] == '4') { // TODO: Fix this so April isn't hard coded
-            // TODO: There's probably a more efficient way that doesn't involve creating a CSVRow object that is ultimately not used
+        std::string month = line.substr(0, line.find('/'));
+        std::cout << month << std::endl;
+
+        if (month == target_month) { // TODO: Fix this so April isn't hard coded
+            // TODO: There's probably a more efficient way that doesn't involve creating
+            // a CSVRow object that is ultimately not used.
             // May require SplitRow() to be a global function instead of a class method? 
             CSVRow row = CSVRow(line);
             
