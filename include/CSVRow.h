@@ -12,6 +12,7 @@ class CSVRow {
         std::string getPayee();
         void setPayee(std::unordered_map<std::string, std::string> payee_map);
         void printRow();
+        std::string outputRow();
 
     private:
         std::string date;
@@ -19,6 +20,6 @@ class CSVRow {
         std::string charge_type;
         std::string amount;
         std::string payee;
-        std::vector<std::string> SplitRow(std::string& unsplit_row, const char& delim);
-        std::string GetPayee();
+        std::vector<std::string> splitRow(std::string& unsplit_row, const char& delim);
+        std::string getPayeeFromUser();
 };

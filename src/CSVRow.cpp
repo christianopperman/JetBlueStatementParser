@@ -5,7 +5,7 @@
 
 // Constructor
 CSVRow::CSVRow(std::string& unsplit_row, const char& delim) {
-    std::vector<std::string> parsed_row = SplitRow(unsplit_row, delim);
+    std::vector<std::string> parsed_row = splitRow(unsplit_row, delim);
     date = parsed_row[0];
     merchant = parsed_row[1];
     charge_type = parsed_row[2];
@@ -29,7 +29,7 @@ void CSVRow::setPayee(std::unordered_map<std::string, std::string> payee_map) {
         }
     }
     if (payee == "NONE") {
-        payee = GetPayee();
+        payee = getPayeeFromUser();
     }
     }
 
@@ -38,11 +38,26 @@ void CSVRow::printRow() {
     std::cout << date << ", " << merchant << ", " << amount << ", " << payee << "\n";
 }
 
+/// @brief  
+/// @return 
+std::string CSVRow::outputRow() {
+    std::string output_str {};
+
+    for (std::string const& s : std::vector<std::string>{date, merchant, charge_type, amount, payee}) {
+        output_str += s + ",";
+    }
+
+    output_str.pop_back();
+    output_str += "\r";
+
+    return output_str;
+}
+
 /// @brief Takes a CSV row and parses it into tokens. This algorithm handles fields with commas in them, provided they are delineated by quotes.
 /// @param unsplit_row 
 /// @param delim 
 /// @return <std::vector<std::string>> row_tokens, a vector of strings representing the parsed tokens from the CSV row.
-std::vector<std::string> CSVRow::SplitRow(std::string& unsplit_row, const char& delim) {
+std::vector<std::string> CSVRow::splitRow(std::string& unsplit_row, const char& delim) {
     bool quote_flag = false;
     std::vector<std::string> row_tokens;
     std::string token = "";
@@ -72,7 +87,7 @@ std::vector<std::string> CSVRow::SplitRow(std::string& unsplit_row, const char& 
 
 /// @brief 
 /// @return 
-std::string CSVRow::GetPayee() {
+std::string CSVRow::getPayeeFromUser() {
     // Prompt the user to supply the payer for an unknown merchant
     std::string user_input;
     std::cout << "Please provide the payee for " << date << "/" << merchant << "/" << amount << ": ";
