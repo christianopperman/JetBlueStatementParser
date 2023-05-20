@@ -68,7 +68,6 @@ void processTotals(std::vector<CSVRow> rows) {
             p_total += amt;
         } else if (set_payee == "Both") {
             b_total += amt;
-            row.printRow();
         }
         else {
             c_total += amt;
@@ -90,6 +89,9 @@ int main() {
     std::string user_month;
     std::cout << "Please enter the current month (1-12): ";
     std::cin >> user_month;
+    if (user_month.length() == 1 ) {
+        user_month = "0" + user_month;
+    }
     const std::string target_month {user_month};
     
     std::vector<CSVRow> rows;
@@ -98,9 +100,8 @@ int main() {
 
     while(getline(file, line)) {
         std::string month = line.substr(0, line.find('/'));
-        std::cout << month << std::endl;
 
-        if (month == target_month) { // TODO: Fix this so April isn't hard coded
+        if (month == target_month) {
             // TODO: There's probably a more efficient way that doesn't involve creating
             // a CSVRow object that is ultimately not used.
             // May require SplitRow() to be a global function instead of a class method? 
@@ -108,7 +109,7 @@ int main() {
             
             // Not necessary to include Payment Received lines in calculation because
             // Those are payments already made and will confuse the totals
-            if (row.getMerchant() != "Payment Received") {
+            if (row.getMerchant() != "Payment Received" && row.getMerchant() != "\"Payment Received\"") {
                 row.setPayee(payee_map);
                 rows.push_back(row);
             }
