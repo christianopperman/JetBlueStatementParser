@@ -1,4 +1,5 @@
 #pragma once
+#include "CSVRow.h"
 
-std::string getInputCSV(std::string folder_loc = "src/input");
 std::unordered_map<std::string, std::string> buildPayeeMap();
+void processTotals(std::vector<CSVRow> row);

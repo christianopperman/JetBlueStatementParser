@@ -3,35 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
-
-#include "CSVRow.h"
 #include "parser.h"
+#include "ManageCSV.h"
 
-/// @brief Return the most recent .csv file in the input folder.
-/// @param folder_loc[in] Folder in which to look for the most recent .csv file.
-/// @returns file (std::string) Filepath to most recent .csv file in folder_loc
-std::string getInputCSV(std::string folder_loc) {
-    std::filesystem::path dir {std::filesystem::current_path() / folder_loc};
-    auto dir_iter = std::filesystem::directory_iterator(dir);
-
-    std::filesystem::path latest_file{};
-    for (auto const& dir_entry : dir_iter) {
-        const std::filesystem::path path{dir_entry.path()};
-        if (path.extension() == ".csv") {
-
-            if (latest_file == "") {
-                latest_file = path;
-            }
-            
-            auto time{dir_entry.last_write_time()};
-            if (time > std::filesystem::last_write_time(latest_file)) {
-                latest_file = path;
-            }
-        }
-    }
-    
-    return latest_file;
-}
 
 /// @brief Builds a map for <merchant, payee> for categorizing rows in bank statement from .csv file
 /// @return payee_map (std::unordered_map)
@@ -79,7 +53,6 @@ void processTotals(std::vector<CSVRow> rows) {
     std::cout << "Total for Both: $" << b_total << "\n";
 }
 
-
 int main() {
     std::filesystem::path file_loc { getInputCSV() };
     std::unordered_map<std::string, std::string> payee_map { buildPayeeMap() };
@@ -117,5 +90,5 @@ int main() {
     }
 
     processTotals(rows);
-
+    outputCSV(rows);
 }

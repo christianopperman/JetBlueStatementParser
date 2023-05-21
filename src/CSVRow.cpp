@@ -1,7 +1,7 @@
-#include "CSVRow.h"
 #include <iostream>
 #include <regex>
 #include <sstream>
+#include "CSVRow.h"
 
 // Constructor
 CSVRow::CSVRow(std::string& unsplit_row, const char& delim) {
@@ -48,7 +48,7 @@ std::string CSVRow::outputRow() {
     }
 
     output_str.pop_back();
-    output_str += "\r";
+    output_str += "\n";
 
     return output_str;
 }
